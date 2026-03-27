@@ -291,16 +291,16 @@
     }
     
     function devResetLeaderboard() {
-        if (confirm('Are you sure you want to reset the entire leaderboard? This will delete all entries from Dreamlo!')) {
+        if (confirm(`Are you sure you want to reset the ${currentLeaderboardMode} leaderboard? This will delete all entries!`)) {
             leaderboard = [];
-            const targetUrl = 'http://dreamlo.com/lb/_VKanEz7lkSQ2iLJrCvVrgTthj6suPakGd3nNlMedDUA/clear';
-            // Using the CodeTabs proxy
+            const codes = getDreamloCodes(currentLeaderboardMode);
+            const targetUrl = `http://dreamlo.com/lb/${codes.priv}/clear`;
             const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`;
             
             fetch(proxyUrl)
             .then(response => {
                 if (response.ok) {
-                    alert('Leaderboard has been reset. All entries deleted from Dreamlo.');
+                    alert(`${currentLeaderboardMode} Leaderboard has been reset.`);
                     loadLeaderboard();
                 } else { alert('Failed to reset leaderboard.'); }
             })
@@ -347,20 +347,30 @@ let isDevUnlocked = false;
     let inputName = '';
     let showNameInput = false;
 
-    // The new, highly reliable middleman
+    const DREAMLO_PUBLIC_CLASSIC = '69c672f28f40bc2f6084f817';
+    const DREAMLO_PRIVATE_CLASSIC = '_VKanEz7lkSQ2iLJrCvVrgTthj6suPakGd3nNlMedDUA';
+
+    const DREAMLO_PUBLIC_ENDLESS = '69c69bd88f40bc2f6086c41f';
+    const DREAMLO_PRIVATE_ENDLESS = 'jvDcnsBwJk6fya1GUA8-yQ_PSo9L5Oj0mj9WB6QeIvTQ';
+
     const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
+    let currentLeaderboardMode = 'CLASSIC'; 
+
+    function getDreamloCodes(mode) {
+        if (mode === 'ENDLESS') return { pub: DREAMLO_PUBLIC_ENDLESS, priv: DREAMLO_PRIVATE_ENDLESS };
+        return { pub: DREAMLO_PUBLIC_CLASSIC, priv: DREAMLO_PRIVATE_CLASSIC };
+    }
 
     async function loadLeaderboard() {
         try {
-            const targetUrl = 'http://dreamlo.com/lb/69c672f28f40bc2f6084f817/json';
+            const codes = getDreamloCodes(currentLeaderboardMode);
+            const targetUrl = `http://dreamlo.com/lb/${codes.pub}/json`;
             const proxyUrl = `${PROXY_URL}${encodeURIComponent(targetUrl)}`;
             
             const response = await fetch(proxyUrl);
 
             if (response.ok) {
-                // CodeTabs gives us the clean data directly, no unpacking needed!
                 const data = await response.json();
-                
                 leaderboard = [];
                 if (data.dreamlo && data.dreamlo.leaderboard && data.dreamlo.leaderboard.entry) {
                     const entries = Array.isArray(data.dreamlo.leaderboard.entry) 
@@ -387,7 +397,8 @@ let isDevUnlocked = false;
         const cleanName = name.trim().replace(/[^a-zA-Z0-9]/g, "");
 
         try {
-            const targetUrl = `http://dreamlo.com/lb/_VKanEz7lkSQ2iLJrCvVrgTthj6suPakGd3nNlMedDUA/add/${encodeURIComponent(cleanName)}/${score}/${Math.floor(time)}`;
+            const codes = getDreamloCodes(gameMode);
+            const targetUrl = `http://dreamlo.com/lb/${codes.priv}/add/${encodeURIComponent(cleanName)}/${score}/${Math.floor(time)}`;
             const proxyUrl = `${PROXY_URL}${encodeURIComponent(targetUrl)}`;
             
             const response = await fetch(proxyUrl);
@@ -399,33 +410,34 @@ let isDevUnlocked = false;
         } catch (error) { console.log('Failed to add to Dreamlo:', error); }
     }
 
-    // --- Name Input Screen ---
+    // --- // --- Name Input Screen ---
     function drawNameInput() {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.9)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.textAlign = 'center';
         
         ctx.fillStyle = '#f4ecd8'; ctx.font = 'bold 32px "Book Antiqua", serif';
-        ctx.fillText('VICTORIA!', canvas.width / 2, 100);
+        ctx.fillText(gameMode === 'ENDLESS' ? 'CANTUS FINITUS' : 'VICTORIA!', canvas.width / 2, 100);
         
         ctx.fillStyle = '#d4c3a3'; ctx.font = '20px "Book Antiqua", serif';
         ctx.fillText('Tempus: ' + Math.floor(levelTime / 60) + ':' + Math.floor(levelTime % 60).toString().padStart(2, '0'), canvas.width / 2, 140);
         ctx.fillText('Puncta: ' + player.score, canvas.width / 2, 170);
+        if (gameMode === 'ENDLESS') ctx.fillText('Spatium: ' + endlessDistance, canvas.width / 2, 200);
         
         ctx.fillStyle = '#b8860b'; ctx.font = '18px "Book Antiqua", serif';
-        ctx.fillText('Inscribe nomen tuum:', canvas.width / 2, 220);
+        ctx.fillText('Inscribe nomen tuum:', canvas.width / 2, 240);
         
         ctx.strokeStyle = '#b8860b'; ctx.lineWidth = 2;
-        ctx.strokeRect(canvas.width / 2 - 100, 250, 200, 30);
+        ctx.strokeRect(canvas.width / 2 - 100, 270, 200, 30);
         ctx.fillStyle = inputName ? '#d4c3a3' : '#1a100a';
-        ctx.fillRect(canvas.width / 2 - 98, 252, 196, 26);
+        ctx.fillRect(canvas.width / 2 - 98, 272, 196, 26);
         
         ctx.fillStyle = '#000'; ctx.font = '16px monospace';
         ctx.textAlign = 'center';
         const cursor = Math.floor(Date.now() / 500) % 2 ? '_' : '';
-        ctx.fillText(inputName + cursor, canvas.width / 2, 270);
+        ctx.fillText(inputName + cursor, canvas.width / 2, 290);
         
         ctx.fillStyle = '#b8860b'; ctx.font = 'italic 14px "Book Antiqua", serif';
-        ctx.fillText('Press ENTER to save, ESC to skip', canvas.width / 2, 320);
+        ctx.fillText('Press ENTER to save, ESC to skip', canvas.width / 2, 340);
     }
 
     // --- Leaderboard Display Screen ---
@@ -433,21 +445,33 @@ let isDevUnlocked = false;
         ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Draw close button in top-right corner
+        // Draw Switch Button
+        const switchBtnW = 160;
+        const switchBtnH = 30;
+        const switchBtnX = 10;
+        const switchBtnY = 10;
+        
+        ctx.fillStyle = 'rgba(184, 134, 11, 0.3)';
+        ctx.fillRect(switchBtnX, switchBtnY, switchBtnW, switchBtnH);
+        ctx.strokeStyle = '#b8860b';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(switchBtnX, switchBtnY, switchBtnW, switchBtnH);
+        
+        ctx.fillStyle = '#d4c3a3';
+        ctx.font = '16px "Book Antiqua", serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(currentLeaderboardMode === 'CLASSIC' ? 'Switch to Endless' : 'Switch to Classic', switchBtnX + switchBtnW / 2, switchBtnY + 21);
+
+        // Draw close button
         const closeBtnSize = 30;
         const closeBtnX = canvas.width - closeBtnSize - 10;
         const closeBtnY = 10;
         
-        // Close button background
         ctx.fillStyle = 'rgba(184, 134, 11, 0.3)';
         ctx.fillRect(closeBtnX, closeBtnY, closeBtnSize, closeBtnSize);
-        
-        // Close button border
         ctx.strokeStyle = '#b8860b';
         ctx.lineWidth = 2;
         ctx.strokeRect(closeBtnX, closeBtnY, closeBtnSize, closeBtnSize);
-        
-        // Draw X symbol
         ctx.strokeStyle = '#d4c3a3';
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -464,7 +488,7 @@ let isDevUnlocked = false;
         
         ctx.fillStyle = '#d4c3a3';
         ctx.font = '20px "Book Antiqua", serif';
-        ctx.fillText('Top 10 Champions (Global)', canvas.width / 2, 100);
+        ctx.fillText(`Top 10 Champions (${currentLeaderboardMode})`, canvas.width / 2, 100);
         
         ctx.textAlign = 'left';
         ctx.font = '16px "Book Antiqua", serif';
@@ -827,7 +851,13 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
 
         if (gameState === 'DEATH_FREEZE') {
             if (!e.repeat) {
-                startGame();
+                if (gameMode === 'ENDLESS') {
+                    gameState = 'NAME_INPUT';
+                    inputName = '';
+                    if (isTouchDevice) showMobileNameInput();
+                } else {
+                    startGame();
+                }
             }
             return;
         }
@@ -1106,7 +1136,13 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
     window.addEventListener('touchend', (e) => {
         if (gameState === 'DEATH_FREEZE') {
             e.preventDefault();
-            startGame();
+            if (gameMode === 'ENDLESS') {
+                gameState = 'NAME_INPUT';
+                inputName = '';
+                showMobileNameInput();
+            } else {
+                startGame();
+            }
         }
     }, { passive: false });
 
@@ -1143,13 +1179,28 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
                 loadLeaderboard();
             }
         } else if (gameState === 'DEATH_FREEZE' || gameState === 'WIN') {
-            if (gameState === 'WIN') gameState = 'MENU'; else startGame();
+            if (gameState === 'WIN') {
+                gameState = 'MENU';
+            } else if (gameMode === 'ENDLESS') {
+                gameState = 'NAME_INPUT';
+                inputName = '';
+                if (isTouchDevice) showMobileNameInput();
+            } else {
+                startGame();
+            }
         } else if (gameState === 'LEADERBOARD') {
-            // Check if close button was clicked
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX - rect.left) / (rect.width / canvas.width);
             const y = (e.clientY - rect.top) / (rect.height / canvas.height);
             
+            // Check if Switch Mode button was clicked
+            if (x >= 10 && x <= 170 && y >= 10 && y <= 40) {
+                currentLeaderboardMode = currentLeaderboardMode === 'CLASSIC' ? 'ENDLESS' : 'CLASSIC';
+                loadLeaderboard();
+                return;
+            }
+
+            // Check if close button was clicked
             const closeBtnSize = 30;
             const closeBtnX = canvas.width - closeBtnSize - 10;
             const closeBtnY = 10;
