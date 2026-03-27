@@ -895,6 +895,11 @@ let isDevUnlocked = false;
             return;
         }
 
+        if (gameState === 'INSTALL_PROMPT') {
+            gameState = 'MENU';
+            return;
+        }
+
         if (gameState === 'SPLASH' && !e.repeat) {
             advanceSplash();
             return;
@@ -1172,10 +1177,26 @@ let isDevUnlocked = false;
 
     canvas.addEventListener('pointerdown', (e) => {
         unlockAudio();
+        
+        // Let user tap anywhere to exit the install prompt
+        if (gameState === 'INSTALL_PROMPT') {
+            gameState = 'MENU';
+            return;
+        }
+
         if (gameState === 'SPLASH') {
             advanceSplash();
         } else if (gameState === 'MENU') {
-            const rect = canvas.getBoundingClientRect(); const y = (e.clientY - rect.top) / (rect.height / canvas.height); 
+            const rect = canvas.getBoundingClientRect(); 
+            const y = (e.clientY - rect.top) / (rect.height / canvas.height);
+            const x = (e.clientX - rect.left) / (rect.width / canvas.width);
+            
+            // Check if "Install?" button was clicked
+            if (x > 660 && x < 780 && y > 16 && y < 52) {
+                gameState = 'INSTALL_PROMPT';
+                return;
+            }
+
             if (y > 118 && y < 170) { gameMode = 'CLASSIC'; currentLevel = 0; startGame(); }
             else if (y > 184 && y < 236) { gameMode = 'ENDLESS'; currentLevel = 0; startGame(); }
             else if (y > 250 && y < 302) { gameMode = 'GRADUS'; currentLevel = 0; startGame(); }
@@ -1734,7 +1755,20 @@ let isDevUnlocked = false;
             drawModeButton(250, 'Gradus ad Parnassum');
             drawModeButton(316, 'Magistri Mensurarum');
 
-            const credit = 'Feedback > mensuratorgame@gmail.com © Samuel Reid Navarro  ·  ' + new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            // Install Button (Top Right)
+            ctx.fillStyle = 'rgba(184, 134, 11, 0.2)';
+            pathRoundRect(ctx, 660, 16, 120, 36, 10);
+            ctx.fill();
+            ctx.strokeStyle = '#b8860b';
+            ctx.lineWidth = 2;
+            pathRoundRect(ctx, 660, 16, 120, 36, 10);
+            ctx.stroke();
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 30px "Book Antiqua", serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Install', 720, 45);
+
+            const credit = 'Feedback > mensuratorgame@gmail.com  Samuel Reid Navarro  ·  ' + new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
             ctx.fillStyle = '#3d2914';
             ctx.font = 'italic 13px serif';
             ctx.fillText(credit, 200, 378);
@@ -2035,6 +2069,19 @@ if (!boss.active) {
             drawNameInput();
         } else if (gameState === 'LEADERBOARD') {
             drawLeaderboard();
+        } else if (gameState === 'INSTALL_PROMPT') {
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f4ecd8';
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 32px "Book Antiqua", serif';
+            ctx.fillText('For optimal playing experience on iPhone,', canvas.width / 2, canvas.height / 2 - 30);
+            ctx.fillText('press the ••• button, press Share ', canvas.width / 2, canvas.height / 2 + 10);
+            ctx.fillText('and select "Add to Home Screen".', canvas.width / 2, canvas.height / 2 + 50);
+            
+            ctx.fillStyle = '#b8860b';
+            ctx.font = 'italic 18px "Book Antiqua", serif';
+            ctx.fillText('Tap anywhere to return', canvas.width / 2, canvas.height - 30);
         }
     }
 
