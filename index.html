@@ -351,7 +351,8 @@ let isDevUnlocked = false;
 
     async function loadLeaderboard() {
         try {
-            const response = await fetch(`${DREAMLO_URL}${DREAMLO_PUBLIC_CODE}/json`);
+            const targetUrl = `http://dreamlo.com/lb/${DREAMLO_PUBLIC_CODE}/json`;
+            const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
             if (response.ok) {
                 const data = await response.json();
                 leaderboard = [];
@@ -376,7 +377,8 @@ let isDevUnlocked = false;
 
     async function addToLeaderboard(name, score, time) {
         try {
-            const response = await fetch(`${DREAMLO_URL}${DREAMLO_PRIVATE_CODE}/add/${encodeURIComponent(name)}/${score}/${time}`);
+            const targetUrl = `http://dreamlo.com/lb/${DREAMLO_PRIVATE_CODE}/add/${encodeURIComponent(name)}/${score}/${time}`;
+            const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
             if (response.ok) {
                 await loadLeaderboard();
             }
