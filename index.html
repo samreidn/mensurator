@@ -293,7 +293,9 @@
     function devResetLeaderboard() {
         if (confirm('Are you sure you want to reset the entire leaderboard? This will delete all entries from Dreamlo!')) {
             leaderboard = [];
-            fetch(`${DREAMLO_URL}${DREAMLO_PRIVATE_CODE}/clear`)
+            // Added the proxy to bypass the HTTPS block
+            const targetUrl = `http://dreamlo.com/lb/${DREAMLO_PRIVATE_CODE}/clear`;
+            fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`)
             .then(response => {
                 if (response.ok) {
                     alert('Leaderboard has been reset. All entries deleted from Dreamlo.');
@@ -351,7 +353,8 @@ let isDevUnlocked = false;
 
     async function loadLeaderboard() {
         try {
-            const targetUrl = `http://dreamlo.com/lb/${DREAMLO_PUBLIC_CODE}/json`;
+            // FIX 1: Added Date.now() to prevent the proxy from caching old data forever
+            const targetUrl = `http://dreamlo.com/lb/${DREAMLO_PUBLIC_CODE}/json?t=${Date.now()}`;
             const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
             if (response.ok) {
                 const data = await response.json();
@@ -365,7 +368,8 @@ let isDevUnlocked = false;
                         leaderboard.push({
                             name: entry.name,
                             score: parseInt(entry.score),
-                            time: parseInt(entry.time)
+                            // FIX 2: Dreamlo outputs "seconds", not "time"!
+                            time: parseInt(entry.seconds) 
                         });
                     });
                 }
@@ -377,7 +381,8 @@ let isDevUnlocked = false;
 
     async function addToLeaderboard(name, score, time) {
         try {
-            const targetUrl = `http://dreamlo.com/lb/${DREAMLO_PRIVATE_CODE}/add/${encodeURIComponent(name)}/${score}/${time}`;
+            // FIX 1 again: Added Date.now() cache buster here too just in case
+            const targetUrl = `http://dreamlo.com/lb/${DREAMLO_PRIVATE_CODE}/add/${encodeURIComponent(name)}/${score}/${time}?t=${Date.now()}`;
             const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
             if (response.ok) {
                 await loadLeaderboard();
