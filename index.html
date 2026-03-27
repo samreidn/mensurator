@@ -293,15 +293,18 @@
     function devResetLeaderboard() {
         if (confirm('Are you sure you want to reset the entire leaderboard? This will delete all entries from Dreamlo!')) {
             leaderboard = [];
-            const targetUrl = `${DREAMLO_URL}${DREAMLO_PRIVATE_CODE}/clear?t=${Date.now()}`;
-            fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`)
+            // Use your exact Clear link wrapped in the new proxy
+            const targetUrl = 'http://dreamlo.com/lb/_VKanEz7lkSQ2iLJrCvVrgTthj6suPakGd3nNlMedDUA/clear';
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+            
+            fetch(proxyUrl)
             .then(response => {
                 if (response.ok) {
                     alert('Leaderboard has been reset. All entries deleted from Dreamlo.');
                     loadLeaderboard();
-                } else { alert('Failed to reset leaderboard. Check console for details.'); }
+                } else { alert('Failed to reset leaderboard.'); }
             })
-            .catch(error => { alert('Error resetting leaderboard. Check console for details.'); });
+            .catch(error => { alert('Error resetting leaderboard.'); });
         }
     }
     
@@ -344,16 +347,15 @@ let isDevUnlocked = false;
     let inputName = '';
     let showNameInput = false;
 
-    const DREAMLO_PUBLIC_CODE = '69c672f28f40bc2f6084f817';
-    const DREAMLO_PRIVATE_CODE = '_VKanEz7lkSQ2iLJrCvVrgTthj6suPakGd3nNlMedDUA';
-    const DREAMLO_URL = 'http://dreamlo.com/lb/';
-
-    leaderboard = [];
-
     async function loadLeaderboard() {
         try {
-            const targetUrl = `http://dreamlo.com/lb/${DREAMLO_PUBLIC_CODE}/json?t=${Date.now()}`;
-            const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
+            // Using your exact JSON link wrapped in the new proxy
+            const targetUrl = 'http://dreamlo.com/lb/69c672f28f40bc2f6084f817/json';
+            // The &t=${Date.now()} part is the "cache-buster" that guarantees fresh data
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}&t=${Date.now()}`;
+            
+            const response = await fetch(proxyUrl);
+
             if (response.ok) {
                 const data = await response.json();
                 leaderboard = [];
@@ -366,22 +368,33 @@ let isDevUnlocked = false;
                         leaderboard.push({
                             name: entry.name,
                             score: parseInt(entry.score),
-                            time: parseInt(entry.seconds)
+                            time: entry.seconds ? parseInt(entry.seconds) : 0
                         });
                     });
                 }
             }
         } catch (error) { console.log('Failed to load from Dreamlo:', error); }
-        leaderboard.sort((a, b) => b.score !== a.score ? b.score - a.score : a.time - b.time);
+        
+        leaderboard.sort((a, b) => b.score - a.score);
         leaderboard = leaderboard.slice(0, 10);
     }
 
     async function addToLeaderboard(name, score, time) {
+        if (!name || name.trim() === "") return;
+        // This removes weird symbols so the link doesn't break
+        const cleanName = name.trim().replace(/[^a-zA-Z0-9]/g, "");
+
         try {
-            const targetUrl = `http://dreamlo.com/lb/${DREAMLO_PRIVATE_CODE}/add/${encodeURIComponent(name)}/${score}/${time}?t=${Date.now()}`;
-            const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
+            // Using your exact Add link format, with time appended to the end
+            const targetUrl = `http://dreamlo.com/lb/_VKanEz7lkSQ2iLJrCvVrgTthj6suPakGd3nNlMedDUA/add/${encodeURIComponent(cleanName)}/${score}/${Math.floor(time)}`;
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+            
+            const response = await fetch(proxyUrl);
             if (response.ok) {
-                await loadLeaderboard();
+                // Give Dreamlo a split second to save it before fetching the new board
+                setTimeout(() => {
+                    loadLeaderboard();
+                }, 500);
             }
         } catch (error) { console.log('Failed to add to Dreamlo:', error); }
     }
@@ -468,8 +481,7 @@ let isDevUnlocked = false;
                 else ctx.fillStyle = '#d4c3a3';
                 
                 const rank = (i + 1).toString().padStart(2, '.') + ' ';
-                const timeStr = Math.floor(entry.time / 60) + ':' + Math.floor(entry.time % 60).toString().padStart(2, '0');
-                ctx.fillText(rank + entry.name + ' - ' + entry.score + ' pts - ' + timeStr, canvas.width / 2 - 150, y);
+                ctx.fillText(rank + entry.name + ' - ' + entry.score + ' pts', canvas.width / 2 - 150, y);
                 y += 25;
             });
         }
@@ -829,7 +841,6 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
             if (e.key === 'Enter' && inputName.length > 0) {
                 addToLeaderboard(inputName, player.score, levelTime);
                 gameState = 'LEADERBOARD';
-                loadLeaderboard();
                 cleanupMobileOverlay();
             } else if (e.key === 'Escape') {
                 gameState = 'LEADERBOARD';
@@ -994,7 +1005,6 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
             if (inputName.length > 0) {
                 addToLeaderboard(inputName, player.score, levelTime);
                 gameState = 'LEADERBOARD';
-                loadLeaderboard();
                 cleanupMobileOverlay();
             }
         });
