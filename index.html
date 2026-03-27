@@ -147,9 +147,9 @@
 </div>
 
 <div id="touchZonesOverlay" style="display:none; pointer-events:none; position:fixed; left:0; top:0; width:100vw; height:0; z-index:4;">
-    <div style="position:absolute; left:0; top:0; width:25%; height:100%; border-right: 1px solid rgba(184,134,11,0.2); display:flex; align-items:center; justify-content:center; color:rgba(184,134,11,0.3); font-size:24px;">◄</div>
-    <div style="position:absolute; left:25%; top:0; width:25%; height:100%; border-right: 1px solid rgba(184,134,11,0.2); display:flex; align-items:center; justify-content:center; color:rgba(184,134,11,0.3); font-size:24px;">►</div>
-    <div style="position:absolute; left:50%; top:0; width:50%; height:100%; display:flex; align-items:center; justify-content:center; color:rgba(184,134,11,0.3); font-size:24px;">▲ JUMP</div>
+    <div style="position:absolute; left:0; top:0; width:18%; height:100%; border-right: 1px solid rgba(184,134,11,0.2); display:flex; align-items:center; justify-content:center; color:rgba(184,134,11,0.3); font-size:24px;">◄</div>
+    <div style="position:absolute; left:18%; top:0; width:27%; height:100%; border-right: 1px solid rgba(184,134,11,0.2); display:flex; align-items:center; justify-content:center; color:rgba(184,134,11,0.3); font-size:24px;">►</div>
+    <div style="position:absolute; left:45%; top:0; width:55%; height:100%; display:flex; align-items:center; justify-content:center; color:rgba(184,134,11,0.3); font-size:24px;">▲ JUMP</div>
 </div>
 
 <div id="tShootDraggable">●</div>
@@ -172,37 +172,41 @@
 </div>
 
 <div id="pauseOverlay" class="overlay">
-    <div class="menu-box" style="max-width: 500px; max-height: 85vh; overflow-y: auto;">
-        <h2>PAUSATUM</h2>
-        <div class="slider-container">
-            <label>Mensura (Game Speed): <br><span id="speedLabel" style="font-weight:bold; color:#b8860b;">Tempus perfectum prolatio minor</span><br>
-            <input type="range" id="speedSlider" min="0" max="4" step="1" value="2" oninput="updateSpeedLabel()"></label>
-        </div>
-        <div class="slider-container">
-            <label>Musica Vol: <span class="slider-value" id="musicVolValue">0.8</span><input type="range" id="musicVol" min="0" max="1" step="0.05" value="0.8" oninput="updateSliderValue('musicVolValue', this.value)"></label>
-        </div>
-        <div class="slider-container">
-            <label>Effectus Vol: <span class="slider-value" id="fxVolValue">0.4</span><input type="range" id="fxVol" min="0" max="1" step="0.05" value="0.4" oninput="updateSliderValue('fxVolValue', this.value)"></label>
-        </div>
-        <div id="devPhysicsSection" style="display: none;">
-            <hr style="border-color: rgba(184,134,11,0.3); margin: 15px 0;">
-            <div style="text-align: center; color: #b8860b; font-weight: bold; margin-bottom: 10px; font-size: 14px;">⚙ DEV MODE: Physics Tweaker</div>
-            <div class="slider-container">
-                <label>Gravitas: <span class="slider-value" id="gravityValue">0.6</span><input type="range" id="gravitySlider" min="0.2" max="1.0" step="0.1" value="0.6" oninput="updateSliderValue('gravityValue', this.value)"></label>
-            </div>
-            <div class="slider-container">
-                <label>Saltus Altitudo (Jump Height): <span class="slider-value" id="jumpPowerValue">9</span><input type="range" id="jumpPowerSlider" min="5" max="13" step="1" value="9" oninput="updateSliderValue('jumpPowerValue', this.value)"></label>
-            </div>
-            <div class="slider-container">
-                <label>Celeritas Pedestris (Walk Speed): <span class="slider-value" id="walkSpeedValue">6.5</span><input type="range" id="walkSpeedSlider" min="3" max="10" step="0.5" value="6.5" oninput="updateSliderValue('walkSpeedValue', this.value)"></label>
-            </div>
-            <div class="slider-container">
-                <label>Cursus Velocitas (Sprint Speed): <span class="slider-value" id="sprintSpeedValue">12</span><input type="range" id="sprintSpeedSlider" min="8" max="16" step="1" value="12" oninput="updateSliderValue('sprintSpeedValue', this.value)"></label>
-            </div>
-        </div>
-        <button class="menu-btn" onclick="togglePause()" style="width: 100%; margin-top: 15px;">Resume</button>
-        <button class="menu-btn" onclick="quitToMenu()" style="width: 100%; background: rgba(139, 0, 0, 0.5);">Quit to Title</button>
-    </div>
+    <div class="menu-box" style="max-width: 500px; max-height: 85vh; overflow-y: auto;">
+        <h2>PAUSATUM</h2>
+        
+                <button class="menu-btn" onclick="togglePause()" style="width: 100%; margin-bottom: 10px;">Resume</button>
+        <button class="menu-btn" onclick="quitToMenu()" style="width: 100%; background: rgba(139, 0, 0, 0.5); margin-bottom: 15px;">Quit to Title</button>
+        
+        <hr style="border-color: rgba(184,134,11,0.3); margin: 15px 0;">
+
+        <div class="slider-container">
+            <label>Mensura (Game Speed): <br><span id="speedLabel" style="font-weight:bold; color:#b8860b;">Tempus perfectum prolatio minor</span><br>
+            <input type="range" id="speedSlider" min="0" max="4" step="1" value="2" oninput="updateSpeedLabel()"></label>
+        </div>
+        <div class="slider-container">
+            <label>Musica Vol: <span class="slider-value" id="musicVolValue">0.8</span><input type="range" id="musicVol" min="0" max="1" step="0.05" value="0.8" oninput="updateSliderValue('musicVolValue', this.value)"></label>
+        </div>
+        <div class="slider-container">
+            <label>Effectus Vol: <span class="slider-value" id="fxVolValue">0.4</span><input type="range" id="fxVol" min="0" max="1" step="0.05" value="0.4" oninput="updateSliderValue('fxVolValue', this.value)"></label>
+        </div>
+        <div id="devPhysicsSection" style="display: none;">
+            <hr style="border-color: rgba(184,134,11,0.3); margin: 15px 0;">
+            <div style="text-align: center; color: #b8860b; font-weight: bold; margin-bottom: 10px; font-size: 14px;">⚙ DEV MODE: Physics Tweaker</div>
+            <div class="slider-container">
+                <label>Gravitas: <span class="slider-value" id="gravityValue">0.6</span><input type="range" id="gravitySlider" min="0.2" max="1.0" step="0.1" value="0.6" oninput="updateSliderValue('gravityValue', this.value)"></label>
+            </div>
+            <div class="slider-container">
+                <label>Saltus Altitudo (Jump Height): <span class="slider-value" id="jumpPowerValue">9</span><input type="range" id="jumpPowerSlider" min="5" max="13" step="1" value="9" oninput="updateSliderValue('jumpPowerValue', this.value)"></label>
+            </div>
+            <div class="slider-container">
+                <label>Celeritas Pedestris (Walk Speed): <span class="slider-value" id="walkSpeedValue">6.5</span><input type="range" id="walkSpeedSlider" min="3" max="10" step="0.5" value="6.5" oninput="updateSliderValue('walkSpeedValue', this.value)"></label>
+            </div>
+            <div class="slider-container">
+                <label>Cursus Velocitas (Sprint Speed): <span class="slider-value" id="sprintSpeedValue">12</span><input type="range" id="sprintSpeedSlider" min="8" max="16" step="1" value="12" oninput="updateSliderValue('sprintSpeedValue', this.value)"></label>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -531,7 +535,7 @@ let isDevUnlocked = false;
     const lHommeArme = [0, 0, 3, 3, 2, 1, 0, 4, 4, 0, 4, 4, 4, 3, 2, 1, 0, 7, 7, 6, 6, 7, 5, 4, 7, 7, 6, 6, 7, 5, 4, 7, 8, 7, 6, 5, 4, 0, 0, 3, 3, 2, 1, 0, 4, 4, 0, 4, 4, 4, 3, 2, 1, 0];
     const rhythm = [0.5, 0.25, 0.5, 0.25, 0.25, 0.5, 0.75, 0.25, 0.25, 0.5, 0.25, 0.25, 0.25, 0.5, 0.25, 0.5, 0.75, 0.5, 0.25, 0.5, 0.25, 0.5, 0.25, 0.75, 0.5, 0.25, 0.5, 0.25, 0.5, 0.25, 0.5, 0.25, 0.5, 0.25, 0.25, 0.5, 0.75, 0.5, 0.25, 0.5, 0.25, 0.25, 0.5, 0.75, 0.25, 0.25, 0.5, 0.25, 0.25, 0.25, 0.5, 0.25, 0.5, 0.75];
     const noteStates = ['FUSA', 'DOTTED_FUSA', 'SEMIMINIMA', 'DOTTED_SEMIMINIMA', 'MINIMA', 'DOTTED_MINIMA', 'SEMIBREVIS', 'DOTTED_SEMIBREVIS', 'BREVIS', 'DOTTED_BREVIS', 'LONGA', 'DOTTED_LONGA', 'MAXIMA'];
-const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated mensural values
+    const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64];
 
     function vibrate(ms) {
         if (navigator.vibrate) navigator.vibrate(ms);
@@ -1099,21 +1103,22 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
         let nowLeft = false, nowRight = false, nowJump = false, nowShoot = false;
         
         for(let i=0; i<touches.length; i++) {
-            let x = touches[i].clientX;
-            let y = touches[i].clientY;
-            let w = window.innerWidth;
-            let target = document.elementFromPoint(x, y);
-            if (target && (target.id === 'tPause' || target.closest && target.closest('#tPause'))) continue;
-            if (target && (target.id === 'tShootDraggable' || target.closest && target.closest('#tShootDraggable'))) {
-                nowShoot = true;
-                continue;
-            }
-            if (y < mobileControlTop) continue;
-            
-            if (x < w * 0.25) nowLeft = true;
-            else if (x < w * 0.5) nowRight = true;
-            else nowJump = true;
-        }
+            let x = touches[i].clientX;
+            let y = touches[i].clientY;
+            let w = window.innerWidth;
+            let target = document.elementFromPoint(x, y);
+            if (target && (target.id === 'tPause' || target.closest && target.closest('#tPause'))) continue;
+            if (target && (target.id === 'tShootDraggable' || target.closest && target.closest('#tShootDraggable'))) {
+                nowShoot = true;
+                continue;
+            }
+            // Height restriction removed so zones extend to the top of the screen!
+            
+            // New touch boundaries (18% and 45%)
+            if (x < w * 0.18) nowLeft = true;
+            else if (x < w * 0.45) nowRight = true;
+            else nowJump = true;
+        }
         
         if (nowLeft && !keys.left) pressLeft();
         if (!nowLeft && keys.left) releaseLeft();
@@ -1338,7 +1343,7 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
                 
                 if (enemy.valueIndex !== undefined) {
                     player.stateValue += enemy.valueIndex;
-                    player.stateValue = Math.min(player.stateValue, 32); 
+                    player.stateValue = Math.min(player.stateValue, 64); 
                     player.score += 10;
                 }
                 playSound('bounce'); spawnDust(enemy.x, enemy.y); spawnBlood(enemy.x, enemy.y);
@@ -1460,7 +1465,7 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
                     
                     if (longa.valueIndex !== undefined) {
                         player.stateValue += longa.valueIndex;
-                        player.stateValue = Math.min(player.stateValue, 32); 
+                        player.stateValue = Math.min(player.stateValue, 64); 
                         player.score += 10;
                     }
                     playSound('bounce'); spawnDust(player.x, player.y + player.height); 
@@ -1510,7 +1515,7 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
                     player.jumps = 1; 
                     
                     player.stateValue += flat.valueIndex || 4;
-                    player.stateValue = Math.min(player.stateValue, 32);
+                    player.stateValue = Math.min(player.stateValue, 64);
                     player.score += 10;
                     
                     playSound('bounce'); spawnDust(player.x, player.y + player.height); 
@@ -1530,7 +1535,7 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
                     player.jumps = 1;
                     
                     player.stateValue += enemy.valueIndex || 4;
-                    player.stateValue = Math.min(player.stateValue, 32);
+                    player.stateValue = Math.min(player.stateValue, 64);
                     player.score += 10;
                     
                     playSound('bounce'); spawnDust(player.x, player.y + player.height);
@@ -1546,8 +1551,8 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
         currentLevelData.items.forEach(item => { 
             if (item.active && checkCollision(player, item)) { 
                 item.active = false; 
-                if (player.stateValue < 32) { 
-                    player.stateValue = Math.min(player.stateValue * 1.5, 32); 
+                if (player.stateValue < 64) { 
+                    player.stateValue = Math.min(player.stateValue * 1.5, 64); 
                 } 
                 playSound('point'); 
             } 
@@ -1555,8 +1560,8 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
         currentLevelData.scoreNotes.forEach(note => { 
             if (note.active && checkCollision(player, note)) { 
                 note.active = false; player.score += 1; 
-                if (player.stateValue < 32) { 
-                    player.stateValue = Math.min(player.stateValue * 1.5, 32); 
+                if (player.stateValue < 64) { 
+                    player.stateValue = Math.min(player.stateValue * 1.5, 64); 
                 } 
                 playSound('point'); 
                 if (player.vx > 0) player.vx += 7.8 * speedMult; else if (player.vx < 0) player.vx -= 7.8 * speedMult; 
@@ -1608,7 +1613,7 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
             case 'SEMIBREVIS': drawDiamond(ctx, cx, cy, 13, isColored || isGhost); break; 
             case 'BREVIS': ctx.lineWidth = 3; if(isColored || isGhost) ctx.fillRect(cx-11, cy-11, 22, 22); else ctx.strokeRect(cx - 11, cy - 11, 22, 22); break;
             case 'LONGA': ctx.lineWidth = 3; if(isColored || isGhost) { ctx.fillRect(cx - 11, cy - 11, 22, 22); } else { ctx.fillStyle = '#eeddbb'; ctx.fillRect(cx - 11, cy - 11, 22, 22); ctx.fillStyle = `rgba(26, 16, 10, ${opacity})`; ctx.strokeRect(cx - 11, cy - 11, 22, 22); } ctx.fillRect(cx + 9, cy, 3, 30); break;
-            case 'MAXIMA': ctx.lineWidth = 3; if(isColored || isGhost) { ctx.fillRect(cx - 18, cy - 12, 36, 24); } else { ctx.fillStyle = '#eeddbb'; ctx.fillRect(cx - 18, cy - 12, 36, 24); ctx.fillStyle = `rgba(26, 16, 10, ${opacity})`; ctx.strokeRect(cx - 18, cy - 12, 36, 24); } ctx.fillRect(cx + 15, cy, 3, 35); break;
+            case 'MAXIMA': ctx.lineWidth = 3; if(isColored || isGhost) { ctx.fillRect(cx - 18, cy - 12, 36, 24); } else { ctx.fillStyle = '#eeddbb'; ctx.fillRect(cx - 18, cy - 12, 36, 24); ctx.fillStyle = `rgba(26, 16, 10, ${opacity})`; ctx.strokeRect(cx - 18, cy - 12, 36, 24); } ctx.fillRect(cx + 16, cy, 3, 35); break;
         }
         if (isDotted) { ctx.beginPath(); ctx.arc(cx + 20, cy - 5, 2.8, 0, Math.PI*2); ctx.fill(); }
         ctx.restore();
@@ -1687,8 +1692,12 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
                 if (ctx.measureText(mainTitle).width <= MENU_W - 36 || titleSize <= 30) break;
                 titleSize -= 2;
             }
-            ctx.fillStyle = '#5c3318';
+            ctx.fillStyle = '#cc0000';
             ctx.fillText(mainTitle, MENU_X + (MENU_W - ctx.measureText(mainTitle).width) / 2, 26 + 54);
+            
+            ctx.fillStyle = '#b8860b';
+            ctx.font = 'italic 16px serif';
+            ctx.fillText('Unmute your device for sound!', MENU_X + (MENU_W - ctx.measureText('Unmute your Phone for sound!').width) / 2, 26 + 77);
 
             const drawModeButton = (top, text, accent = '#b8860b', bgStyle = 'rgba(238, 221, 187, 0.45)', isPulsing = false) => {
                 const bh = 52;
@@ -1724,12 +1733,6 @@ const noteValues = [1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 16, 24, 32]; // Updated m
             drawModeButton(184, 'Ars Nova (Endless)');
             drawModeButton(250, 'Gradus ad Parnassum');
             drawModeButton(316, 'Magistri Mensurarum');
-
-            if (isTouchDevice) {
-                ctx.fillStyle = '#8b6914';
-                ctx.font = 'italic 14px serif';
-                ctx.fillText('Drag ● on this screen to place shoot before play.', 400, 332);
-            }
 
             const credit = 'Feedback > mensuratorgame@gmail.com © Samuel Reid Navarro  ·  ' + new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
             ctx.fillStyle = '#3d2914';
@@ -1888,9 +1891,23 @@ if (!boss.active) {
                         ctx.fillText('Controls down below', canvas.width / 2, 120);
                         ctx.font = 'bold 30px sans-serif';
                         ctx.fillText('↓', canvas.width / 2, 160);
+                        
+                        ctx.fillStyle = '#b8860b';
+                        ctx.font = 'italic 16px serif';
+                        ctx.fillText('Unmute your device for sound!', canvas.width / 2, 190);
+                        
+                        ctx.font = 'bold 80px sans-serif';
+                        ctx.fillText('→', canvas.width / 2, 240);
                     } else {
                         // Desktop controls hint
                         ctx.fillText('Controls: WASD or ← → ↑', canvas.width / 2, 120);
+                        
+                        ctx.fillStyle = '#b8860b';
+                        ctx.font = 'italic 16px serif';
+                        ctx.fillText('Unmute your device for sound!', canvas.width / 2, 150);
+                        
+                        ctx.font = 'bold 80px sans-serif';
+                        ctx.fillText('→', canvas.width / 2, 200);
                         ctx.font = 'bold 300px sans-serif';
                     }
                     ctx.textAlign = 'left';
