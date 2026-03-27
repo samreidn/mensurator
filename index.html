@@ -293,9 +293,9 @@
     function devResetLeaderboard() {
         if (confirm('Are you sure you want to reset the entire leaderboard? This will delete all entries from Dreamlo!')) {
             leaderboard = [];
-            // Use your exact Clear link wrapped in the new proxy
             const targetUrl = 'http://dreamlo.com/lb/_VKanEz7lkSQ2iLJrCvVrgTthj6suPakGd3nNlMedDUA/clear';
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+            // Using the CodeTabs proxy
+            const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`;
             
             fetch(proxyUrl)
             .then(response => {
@@ -347,17 +347,20 @@ let isDevUnlocked = false;
     let inputName = '';
     let showNameInput = false;
 
+    // The new, highly reliable middleman
+    const PROXY_URL = 'https://api.codetabs.com/v1/proxy?quest=';
+
     async function loadLeaderboard() {
         try {
-            // Using your exact JSON link wrapped in the new proxy
             const targetUrl = 'http://dreamlo.com/lb/69c672f28f40bc2f6084f817/json';
-            // The &t=${Date.now()} part is the "cache-buster" that guarantees fresh data
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}&t=${Date.now()}`;
+            const proxyUrl = `${PROXY_URL}${encodeURIComponent(targetUrl)}`;
             
             const response = await fetch(proxyUrl);
 
             if (response.ok) {
+                // CodeTabs gives us the clean data directly, no unpacking needed!
                 const data = await response.json();
+                
                 leaderboard = [];
                 if (data.dreamlo && data.dreamlo.leaderboard && data.dreamlo.leaderboard.entry) {
                     const entries = Array.isArray(data.dreamlo.leaderboard.entry) 
@@ -381,17 +384,14 @@ let isDevUnlocked = false;
 
     async function addToLeaderboard(name, score, time) {
         if (!name || name.trim() === "") return;
-        // This removes weird symbols so the link doesn't break
         const cleanName = name.trim().replace(/[^a-zA-Z0-9]/g, "");
 
         try {
-            // Using your exact Add link format, with time appended to the end
             const targetUrl = `http://dreamlo.com/lb/_VKanEz7lkSQ2iLJrCvVrgTthj6suPakGd3nNlMedDUA/add/${encodeURIComponent(cleanName)}/${score}/${Math.floor(time)}`;
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+            const proxyUrl = `${PROXY_URL}${encodeURIComponent(targetUrl)}`;
             
             const response = await fetch(proxyUrl);
             if (response.ok) {
-                // Give Dreamlo a split second to save it before fetching the new board
                 setTimeout(() => {
                     loadLeaderboard();
                 }, 500);
