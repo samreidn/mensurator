@@ -159,9 +159,15 @@
 <div id="devOverlay" class="overlay" style="z-index: 40;">
     <div class="menu-box" style="max-width: 95%;">
         <h2>Modus Formatoris</h2>
-        <p style="color:#d4c3a3; font-size:15px; margin:0 0 8px;">Stadium (I–VIII) vel pugna cum Diabolo in Musica.</p>
+        <p style="color:#d4c3a3; font-size:15px; margin:0 0 8px;">Stadium Classicum (I–VIII) vel pugna cum Diabolo.</p>
         <div class="dev-stage-grid" id="devStageGrid"></div>
         <button type="button" class="menu-btn dev-boss-btn" id="devBossBtn">Pugna: MI-FA (Boss)</button>
+        <br>
+        <div style="margin: 15px auto; max-width: 320px; border: 2px solid #b8860b; background: rgba(184, 134, 11, 0.1); padding: 10px; border-radius: 12px;">
+            <label style="color: #f4ecd8; font-weight: bold; display: block; margin-bottom: 8px;">Endless Mode Warp (0-23): </label>
+            <input type="number" id="devEndlessLevelInput" min="0" max="23" value="0" style="width: 60px; background: #1a100a; color: #b8860b; border: 2px solid #b8860b; border-radius: 6px; text-align: center; font-size: 16px; padding: 4px;">
+            <button type="button" class="menu-btn" id="devEndlessJumpBtn" style="padding: 6px 16px; font-size: 16px; margin-left: 10px;">WARP</button>
+        </div>
         <br>
         <button type="button" class="menu-btn" id="devLeaderboardBtn">Test: Nomen in Tabella</button>
         <br>
@@ -204,9 +210,15 @@
             </div>
             <div class="slider-container">
                 <label>Cursus Velocitas (Sprint Speed): <span class="slider-value" id="sprintSpeedValue">12</span><input type="range" id="sprintSpeedSlider" min="8" max="16" step="1" value="12" oninput="updateSliderValue('sprintSpeedValue', this.value)"></label>
-            </div>
-        </div>
-    </div>
+            </div>
+            <div class="slider-container" style="text-align: center; margin-top: 15px;">
+                <label style="color: #ff4444; font-weight: bold; cursor: pointer;">
+                    <input type="checkbox" id="devInvincibilityToggle" style="width: auto; margin-right: 8px;">
+                    INVINCIBILITY
+                </label>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -244,6 +256,19 @@
         devStageGrid.appendChild(b);
     }
     devBossBtn.addEventListener('click', () => devPickBoss());
+    const devEndlessJumpBtn = document.getElementById('devEndlessJumpBtn');
+    devEndlessJumpBtn.addEventListener('click', () => {
+        let targetLevel = parseInt(document.getElementById('devEndlessLevelInput').value) || 0;
+        if (targetLevel < 0) targetLevel = 0;
+        if (targetLevel > 23) targetLevel = 23;
+        
+        window.endlessStartLevel = targetLevel;
+        gameMode = 'ENDLESS';
+        currentLevel = targetLevel;
+        closeDevPanel();
+        if (gameState === 'PAUSE') togglePause();
+        startGame();
+    });
     const devLeaderboardBtn = document.getElementById('devLeaderboardBtn');
     devLeaderboardBtn.addEventListener('click', () => devTestLeaderboard());
     const devResetLeaderboardBtn = document.getElementById('devResetLeaderboardBtn');
@@ -318,11 +343,16 @@
     const speedLabel = document.getElementById('speedLabel');
     const decaySlider = document.getElementById('decaySlider');
 let isDevUnlocked = false;
+let devInvincible = false;
     // Dev Mode Physics Sliders
     const gravitySlider = document.getElementById('gravitySlider');
     const jumpPowerSlider = document.getElementById('jumpPowerSlider');
     const walkSpeedSlider = document.getElementById('walkSpeedSlider');
     const sprintSpeedSlider = document.getElementById('sprintSpeedSlider');
+    const devInvincibilityToggle = document.getElementById('devInvincibilityToggle');
+    if (devInvincibilityToggle) {
+        devInvincibilityToggle.addEventListener('change', (e) => { devInvincible = e.target.checked; });
+    }
 
     let audioCtx; let musicTimeout; let melodyIndex = 0; let audioUnlocked = false; let isMuted = false;
     let isTouchDevice = false;
@@ -529,7 +559,23 @@ let isDevUnlocked = false;
         { name: "Modus V: Lydius", modeName: "Lydius", finalIndex: 10, quote: '"Laetus et clarus, tristes laetificans." - Gioseffo Zarlino (1517–1590)' },
         { name: "Modus VI: Hypolydius", modeName: "Hypolydius", finalIndex: 10, quote: '"Devotus et lacrimosus, plenus gratiae." - Franchinus Gaffurius (1451–1522)' },
         { name: "Modus VII: Mixolydius", modeName: "Mixolydius", finalIndex: 11, quote: '"Angelicus et iuvenilis, sermocinalis." - Johannes Tinctoris (1435–1511)' },
-        { name: "Modus VIII: Hypomixolydius", modeName: "Hypomixolydius", finalIndex: 11, quote: '"Perfectus et plenus scientiae." - Marchetto da Padova (late 13th century)' }
+        { name: "Modus VIII: Hypomixolydius", modeName: "Hypomixolydius", finalIndex: 11, quote: '"Perfectus et plenus scientiae." - Marchetto da Padova (late 13th century)' },
+        { name: "Modus IX: Aeolius", modeName: "Aeolius", finalIndex: 12, quote: '"Apertus et dulcis, animum recreans." - Henricus Glareanus (1488–1563)' },
+        { name: "Modus X: Hypoaeolius", modeName: "Hypoaeolius", finalIndex: 12, quote: '"Flebilis et modestus, ad preces aptus." - Henricus Glareanus (1488–1563)' },
+        { name: "Modus XI: Iastius (Ionicus)", modeName: "Ionicus", finalIndex: 14, quote: '"Jucundus et amabilis, choreis aptissimus." - Henricus Glareanus (1488–1563)' },
+        { name: "Modus XII: Hypoiastius", modeName: "Hypoionicus", finalIndex: 14, quote: '"Blandus et lenis, aures demulcens." - Henricus Glareanus (1488–1563)' },
+        { name: "Modus XIII: Hyperdorius", modeName: "Hyperdorius", finalIndex: 8, quote: '"Beyond limits of grave, tears evaporate." - Anonymus MMDCCLXXXIV' },
+        { name: "Modus XIV: Mechaphrygius", modeName: "Mechaphrygius", finalIndex: 9, quote: '"Fury expressed in cold steel and gears." - The Automaton Boethius' },
+        { name: "Modus XV: Metalydius", modeName: "Metalydius", finalIndex: 10, quote: '"Joy derived from void between stars." - Astro-Zarlino' },
+        { name: "Modus XVI: Quantumhypomixolydius", modeName: "Quantumhypomixolydius", finalIndex: 11, quote: '"Simultaneously perfect and fundamentally uncertain." - Schrödinger da Padova' },
+        { name: "Modus XVII: Cyberaeolius", modeName: "Cyberaeolius", finalIndex: 12, quote: '"Sweetness synthesized, refreshing neural net." - Glareanus 2.0' },
+        { name: "Modus XVIII: Void-Ionicus", modeName: "Void-Ionicus", finalIndex: 14, quote: '"A dance in vacuum of deep space." - Orbital Cotto' },
+        { name: "Modus XIX: Superphrygius", modeName: "Superphrygius", finalIndex: 9, quote: '"Wrath echoing through the multiverse." - The Omni-Monk' },
+        { name: "Modus XX: Chronolydius", modeName: "Chronolydius", finalIndex: 10, quote: '"Happiness that happened tomorrow." - Time-Weaver Gaffurius' },
+        { name: "Modus XXI: Neomixolydius", modeName: "Neomixolydius", finalIndex: 11, quote: '"The angelic dialect of machine code." - Binary Tinctoris' },
+        { name: "Modus XXII: Hyperextended-Dorius", modeName: "Ultra-Dorius", finalIndex: 8, quote: '"Sadness spanning dimensions." - Dimension-Walker Guido' },
+        { name: "Modus XXIII: Plasma-Aeolius", modeName: "Plasma-Aeolius", finalIndex: 12, quote: '"Modest tears burning like stars." - Solar Glareanus' },
+        { name: "Modus XXIV: Omega-Ionicus", modeName: "Omega-Ionicus", finalIndex: 14, quote: '"The final dance at end of time." - The Last Cantor' }
     ];
 
     const lHommeArme = [0, 0, 3, 3, 2, 1, 0, 4, 4, 0, 4, 4, 4, 3, 2, 1, 0, 7, 7, 6, 6, 7, 5, 4, 7, 7, 6, 6, 7, 5, 4, 7, 8, 7, 6, 5, 4, 0, 0, 3, 3, 2, 1, 0, 4, 4, 0, 4, 4, 4, 3, 2, 1, 0];
@@ -734,7 +780,7 @@ let isDevUnlocked = false;
             return { length, platforms, groundChunks, dashPads, walls, fallingLongas, inkPots, allaBreves, cfStars, enemies, flyingEnemies, jumpingFlats, items, scoreNotes, tempusItems, checkpoints, hasFuga: true, goal: {x:0, y:-50000, w:800, h:40} }; 
         }
 
-        const length = isEndless ? 50000 : 8000 + (levelIndex * 2000); 
+        const length = isEndless ? 250000 : 8000 + (levelIndex * 2000); 
         let cx = 0;
         let gapChance = (levelIndex === 7) ? 0 : Math.min(0.1 + (levelIndex * 0.055), 0.48);
         let enemyChance = Math.min(0.16 + (levelIndex * 0.065), 0.52);
@@ -1277,6 +1323,19 @@ let isDevUnlocked = false;
         }
 
         resetPlayer(respawnPoint.x, respawnPoint.y); 
+        
+        if (gameMode === 'ENDLESS' && window.endlessStartLevel > 0) {
+            currentLevel = window.endlessStartLevel;
+            endlessDistance = currentLevel * 50;
+            endlessAutoScroll = endlessDistance * 150;
+            cameraX = endlessAutoScroll;
+            player.x = cameraX + 100;
+            player.y = 50; // Drop from sky
+            // Generate a guaranteed safety pad underneath warp-in point
+            currentLevelData.platforms.push({ x: player.x - 50, y: 150, w: 300, h: 20, type: 'normal', shakeTimer: 0, falling: false });
+            window.endlessStartLevel = null;
+        }
+        
         gameState = 'SPLASH'; 
     }
 
@@ -1304,6 +1363,7 @@ let isDevUnlocked = false;
     }
 
     function takeDamage(amount = 2, killer = null, isHalving = false) { 
+        if (devInvincible) return;
         let stateBeforeDamage = player.stateValue; 
         
         // Check if killed by bigger rest - FREEZE AT POINT OF IMPACT (no subtraction, no blood)
@@ -1430,7 +1490,11 @@ let isDevUnlocked = false;
             if (player.x < -20) player.x = canvas.width; if (player.x > canvas.width) player.x = -20; if (player.y > cameraY + canvas.height + 100) { die(); return; } 
         } else if (gameMode === 'ENDLESS') {
             let smod = 2.5 + (currentLevel * 0.7) + (endlessDistance / 500); endlessAutoScroll += smod * timeMod; cameraX = endlessAutoScroll; endlessDistance = Math.floor(cameraX / 150);
-            if (player.x < cameraX - 24) { die(); return; } if (player.x > cameraX + canvas.width - player.width) player.x = cameraX + canvas.width - player.width;
+            if (player.x < cameraX - 24) { 
+                if (devInvincible) { player.x = cameraX - 24; player.vx = smod * timeMod; } 
+                else { die(); return; } 
+            } 
+            if (player.x > cameraX + canvas.width - player.width) player.x = cameraX + canvas.width - player.width;
         } else if (!boss.active) { if (player.x < 0) player.x = 0; cameraX = player.x - canvas.width / 3; if (cameraX < 0) cameraX = 0; if (cameraX > currentLevelData.length - canvas.width) cameraX = currentLevelData.length - canvas.width; }
 
         let gravity = devPhysics.gravity * speedMult; 
@@ -1597,7 +1661,7 @@ let isDevUnlocked = false;
         if (gameMode === 'CLASSIC') {
             currentLevelData.checkpoints.forEach(cp => { if (cp.active && player.x + player.width >= cp.x && player.x <= cp.x + cp.w) { cp.active = false; respawnPoint = { x: cp.x + 20, y: 150 }; playSound('point'); } });
             if (player.x >= currentLevelData.goal.x && !boss.active) { 
-                if (currentLevel + 1 < modesData.length) { 
+                if (currentLevel + 1 < 8) { 
                     currentLevel++; respawnPoint = { x: 50, y: 150 }; 
                     currentLevelData = generateLevel(currentLevel, false); 
                     resetPlayer(respawnPoint.x, respawnPoint.y); 
